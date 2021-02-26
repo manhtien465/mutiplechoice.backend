@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const puppeterr=require("puppeteer");
-const Crawler =require("../controller/crawler.controller")
-router.route("/getdata")
-.get(Crawler.getDataFromRedis,Crawler.getdata)
+const puppeterr = require("puppeteer");
+const Crawler = require("../controller/crawler.controller")
+router.route("/api/v1/crawler/getdata")
+  .post(Crawler.getdata)
 
-module.exports=router;
+router.route("/api/v1/crawler/getcategory")
+  .post(Crawler.getCategory)
+router.route("/api/v1/crawler/update")
+  .post(Crawler.getLinkAndoldversion)
+module.exports = router;

@@ -1,93 +1,65 @@
-var mongoose =require('mongoose')
-var bcrypt =require("bcryptjs")
+var mongoose = require('mongoose')
+var bcrypt = require("bcryptjs")
 
-var Schema=mongoose.Schema;
+var Schema = mongoose.Schema;
 
-var userSchema= new Schema({
-    firstname:{
-        type:String,
+var userSchema = new Schema({
+    username: {
+        type: String,
     },
-    lastname:{
-        type:String,
+    password: {
+        type: String,
+        minlength: 8,
     },
-    password:{
-        type:String,
-        minlength:8,
-         
-   
-   },
-   
-   email:{
-    type:String,
-    unique :true 
-}, 
-active:{
-    type:Boolean,
-    default:false
-},
-role:{
-  type:Number,
-  default:0
-},
- 
-    
-    day:{
-        type:Date,
-        default: Date.now
+    email: {
+        type: String,
+        unique: true
     },
-    
+    active: {
+        type: Boolean,
+        default: false,
+    },
+    role: {
+        type: String,
+        enum: ["USER", "ADMIN", "COLLAB"],
+        default: "USER"
+    },
 },
-{
-    timestamps:true,
-},
-{
-    collection: "User"
-},
-{ toJSON: { virtuals: true }, toObject: { virtuals: true }}
+    {
+        timestamps: true,
+    },
+    {
+        collection: "User"
+    },
+
 );
 
 
-userSchema.virtual('payment', {
-  ref: 'payment',
-  localField: '_id',
-  foreignField: 'userid',
-  justOne: false,
-  count: true,
-  match: { userid: this._id }
-})
-userSchema.virtual('shoppingItem', {
-  ref: 'shoppingItem',
-  localField: '_id',
-  foreignField: 'userid',
-  justOne: false,
-  count: true,
-   match: { userid: this._id }
-})
-userSchema.pre("save",async function(next){
-try{
-  
-const salt=await bcrypt.genSalt(10)
- const passwordHash =await bcrypt.hash(this.password,salt)
- //tao secretToken de gui verifi email
+userSchema.pre("save", async function (next) {
+    try {
 
-//tao trang thai false (chua )
+        const salt = await bcrypt.genSalt(10)
+        const passwordHash = await bcrypt.hash(this.password, salt)
+        //tao secretToken de gui verifi email
 
- this.password=passwordHash
- next()
-}catch(error){
-    console.log(error);
-    
-next(error)
-}
+        //tao trang thai false (chua )
+
+        this.password = passwordHash
+        next()
+    } catch (error) {
+        console.log(error);
+
+        next(error)
+    }
 })
-userSchema.methods.isValidPassword=async function(newPassword){
-try{
-   return await bcrypt.compare(newPassword,this.password)                 //phair cos return
-}catch(error){
-    throw error
-    
-    
- }
+userSchema.methods.isValidPassword = async function (newPassword) {
+    try {
+        return await bcrypt.compare(newPassword, this.password)                 //phair cos return
+    } catch (error) {
+        throw error
+
+
+    }
 }
 
-module.exports= mongoose.model('users',userSchema);
+module.exports = mongoose.model('users', userSchema);
