@@ -1,29 +1,44 @@
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
 var bcrypt = require("bcryptjs")
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 var userSchema = new Schema({
+
     username: {
         type: String,
+        unique: String,
     },
     password: {
         type: String,
         minlength: 8,
+        minlength: [8, 'Must be six characters long'],
+
     },
     email: {
         type: String,
         unique: true
     },
-    active: {
-        type: Boolean,
-        default: false,
-    },
+
+
     role: {
         type: String,
-        enum: ["USER", "ADMIN", "COLLAB"],
-        default: "USER"
+        enum: ["USER", "ADMIN", "SUPERADMIN", "COLLABORATOR"],
+        default: "USER",
     },
+    isBan: {
+        type: Boolean,
+        default: false
+    },
+    avatar: {
+        type: String
+    },
+
+    day: {
+        type: Date,
+        default: Date.now
+    },
+
 },
     {
         timestamps: true,
@@ -31,10 +46,10 @@ var userSchema = new Schema({
     {
         collection: "User"
     },
-
+    { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-
+userSchema.index({ email: 'text', addresses: 'text', phoneNumber: 'text' })
 userSchema.pre("save", async function (next) {
     try {
 
@@ -57,8 +72,6 @@ userSchema.methods.isValidPassword = async function (newPassword) {
         return await bcrypt.compare(newPassword, this.password)                 //phair cos return
     } catch (error) {
         throw error
-
-
     }
 }
 

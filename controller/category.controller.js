@@ -1,4 +1,4 @@
-const Category = require("../schema/categories");
+const Category = require("../schema/category.schema");
 const addChildren = (parent, map) => {
 
   if (!parent.branches) {
@@ -122,6 +122,7 @@ module.exports = {
 */
   get: async (req, res, next) => {
     const result = await Category.find().sort({ path: 1 })
+    console.log(result);
     const map = {}
     result.map((index) => {
       map[index._id] = index

@@ -8,6 +8,9 @@ var mongoose = require("mongoose")
 // var connectRedis = require('connect-redis')
 // var Redis = require("ioredis")
 const crawlerRouter = require("./routes/crawler.route")
+const userRouter = require("./routes/user.route")
+const categoryRouter = require('./routes/category.route')
+const itemRouter = require("./routes/item.route")
 const passport = require("passport");
 const flash = require('connect-flash');
 
@@ -34,6 +37,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use("/", crawlerRouter)
+app.use("/", categoryRouter)
+app.use("/", itemRouter)
+app.use('/', userRouter)
 
 // app.use(
 //   session({ ...Session_Option,
