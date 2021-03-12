@@ -57,11 +57,23 @@ const getLinkDownLoadOld = async (url) => {
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
   const data = await pg.evaluate(async () => {
+    let newaray = []
+    const data = Array.from(document.querySelectorAll(".table .table-row"))
+    for (let i = 1; i < data.length; i++) {
+      let newobject =
 
-    const data = Array.from(document.querySelectorAll(".table-cell .down")).map(value => (
-      value.getAttribute("href")
-    ))
-    return (data);
+      {
+        dayUpdate: data[i].querySelector(".table-cell .light-black ").textContent,
+        architecture: data[i].querySelectorAll(".dowrap")[1].textContent,
+        MinimumVersion: data[i].querySelectorAll(".dowrap")[2].textContent,
+        ScreenDPI: data[i].querySelectorAll(".dowrap")[3].textContent,
+        link: data[i].querySelector(".down a").getAttribute("href")
+
+      }
+      newaray.push(newobject)
+    }
+
+    return (newaray);
   })
   await browser.close();
   return data
@@ -79,6 +91,7 @@ const getVerrsion = async (url) => {
         linkdownloadOldVersion: value.querySelector("a").getAttribute("href"),
         name: value.querySelector(".ver-item-n").textContent,
         size: value.querySelector(".ver-item-s").textContent,
+        itemId: null,
         apk: Array.from(value.querySelectorAll(".ver-item-t")).map(value => (
           value.textContent
         )),
@@ -115,12 +128,14 @@ const getdetail = async (url) => {
     let inforUpdate = null
     let addition = null
     let author = null
+    let datePublish = null
     let require = null
     let description = null
     try {
       description = document.querySelector(".content").textContent
       addition = Array.from(document.querySelectorAll(".additional ul li p"))
       author = addition[7].textContent
+      datePublish = addition[5].textContent
       require = addition[11].textContent
       inforUpdate = document.querySelector(".describe-whatnew").childNodes[5].textContent
       urlversion = document.querySelector(".ny-versions").getAttribute("href")
@@ -131,7 +146,7 @@ const getdetail = async (url) => {
       { image: value.getAttribute("src") }
     ))
 
-    return ({ Parentcategory, sub, urlversion, listImage, video, inforUpdate, author, require, description, linkdownload });
+    return ({ Parentcategory, sub, urlversion, listImage, video, inforUpdate, author, require, description, linkdownload, datePublish });
   })
   await browser.close();
   return data
@@ -142,7 +157,7 @@ recursive = async (url, SetNumberPage) => {
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
   let nextPage = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
-  console.log(nextPage, typeof nextPage);
+
   const data = await pg.evaluate(async () => {
     let array = []
     const data1 = Array.from(document.querySelectorAll(".editors_m"))
@@ -159,7 +174,7 @@ recursive = async (url, SetNumberPage) => {
     return array;
   })
   if (SetNumberPage === nextPage) {
-    console.log("end", nextPage);
+
     await browser.close();
     return data
   } else {
@@ -171,12 +186,12 @@ recursive = async (url, SetNumberPage) => {
 }
 module.exports = {
   getdata: async (req, res, next) => {
-    let url = "https://apkpure.com/vn/discover?page=1"
+    let url = "https://apkpure.com/vn/discover?page=2"
     try {
 
-      let data = await recursive(url, 2)
+      let data = await recursive(url, 3)
       // let listINforOldVersion = null
-      console.log(data, data);
+
       for (let i = 0; i < data.length; i++) {
         let newurl = `https://apkpure.com${data[i].url}`
         let result = await getdetail(newurl)
@@ -212,14 +227,14 @@ module.exports = {
         let newaray = []
         for (let i = 0; i < result.listImage.length; i++) {
           let IdImage2 = uuidv4();
-          //await download(result.listImage[i].image, `./public/images/${IdImage2}.png`);
+          await download(result.listImage[i].image, `./public/images/${IdImage2}.png`);
           newaray.push(`/images/${IdImage2}.png`)
         }
         data[i].listImage = newaray
 
         //download avatar and config avatar
         let IdImage = uuidv4();
-        // await download(data[i].avatar, `./public/images/${IdImage}.png`);
+        await download(data[i].avatar, `./public/images/${IdImage}.png`);
         data[i].avatar = `/images/${IdImage}.png`
 
 
@@ -228,7 +243,7 @@ module.exports = {
           const newitem = new Items(data[i])
           await newitem.save()
         }
-        console.log("datap[i]", data[i]);
+
       }
 
       res.json({ data: data })
@@ -267,7 +282,7 @@ module.exports = {
     for (let i = 0; i < InsertParentGame.length; i++) {
       parentAll.push(InsertParentGame[i]._id)
     }
-    console.log(parentAll);
+
     if (!existRoot) {
       let root = new Category({ name: "root", isRoot: true, path: "/root", children: parentAll })
       await root.save()
@@ -275,25 +290,45 @@ module.exports = {
     res.json({ insertCategorygame, insertCategoryapp, InsertParentGame })
   },
   getLinkAndoldversion: async (req, res, next) => {
-    const listOfItemNotFinish = await Items.find({ finish: false }).limit(2)
+    const listOfItemNotFinish = await Items.find({ finish: false }).limit(3)
     if (listOfItemNotFinish.length === 0) {
       return res.json({ msg: "all item up to date" })
     }
+    let id = null
     for (let i = 0; i < listOfItemNotFinish.length; i++) {
+
+      id = listOfItemNotFinish[i]._id
       if (listOfItemNotFinish[i].urlversion !== null) {
         let listINforOldVersion = await getVerrsion(`https://apkpure.com${listOfItemNotFinish[i].urlversion}`)
 
-        for (let i = 0; i < listINforOldVersion.length; i++) {
-          if (listINforOldVersion[i].linkdownloadOldVersion.slice(listINforOldVersion[i].linkdownloadOldVersion.length - 7, listINforOldVersion[i].linkdownloadOldVersion.length) !== "version") {
-            let arraylinkdownload = await getLinkDownLoadOld(`https://apkpure.com${listINforOldVersion[i].linkdownloadOldVersion}`)
-            listINforOldVersion[i].linkdownloadOldVersion = arraylinkdownload
-            listINforOldVersion[i].itemId = listOfItemNotFinish[i]._id
+        for (let j = 0; j < listINforOldVersion.length; j++) {
+          if (listINforOldVersion[j].linkdownloadOldVersion.slice(listINforOldVersion[j].linkdownloadOldVersion.length - 7, listINforOldVersion[j].linkdownloadOldVersion.length) !== "version") {
+            let newurlfordownload = listINforOldVersion[j].linkdownloadOldVersion
+            // listINforOldVersion[j].linkdownloadOldVersion = []
+            console.log("run again");
+            let arraylinkdownload = await getLinkDownLoadOld(`https://apkpure.com${newurlfordownload}`)
+            console.log("aray", arraylinkdownload, typeof arraylinkdownload);
+            listINforOldVersion[j].linkdownloadOldVersion = arraylinkdownload
+            listINforOldVersion[j].itemId = id
+
           }
+          listINforOldVersion[j].linkdownloadOldVersion = {
+            link: listINforOldVersion[j].linkdownloadOldVersion
+          }
+
+          listINforOldVersion[j].itemId = id
         }
+
         const insertmany = await Versions.insertMany(listINforOldVersion)
       }
+      const listOfItemUpdate = await Items.findByIdAndUpdate(listOfItemNotFinish[i]._id, { finish: true }, {
+        useFindAndModify: false,
+        new: true,
+        runValidators: true
+      })
+      console.log(listOfItemUpdate);
     }
-    const listOfItemUpdate = await Items.updateMany({ finish: false }, { $set: { finish: true } }).limit(2)
-    res.json({ msg: "successful", listOfItemUpdate })
+
+    res.json({ msg: "successful", listOfItemNotFinish })
   }
 }

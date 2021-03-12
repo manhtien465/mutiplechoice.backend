@@ -17,11 +17,11 @@ const Item = new Schema({
   },
   sub: {
     type: Schema.Types.ObjectId,
-    ref: "categories"
+    ref: "category"
   },
   Parentcategory: {
     type: Schema.Types.ObjectId,
-    ref: "categories"
+    ref: "category"
   },
   listImage: [{ type: String }],
   video: {
@@ -43,31 +43,23 @@ const Item = new Schema({
     type: Boolean,
     default: false,
   },
-  fiveStar: {
+
+  datePublish: {
+    type: String
+  },
+  numberDownloaded: {
     type: Number,
     default: 0
-  },
-  fourStar: {
-    type: Number,
-    default: 0
-  },
-  threeStar: {
-    type: Number,
-    default: 0
-  },
-  twoStar: {
-    type: Number,
-    default: 0
-  },
-  oneStar: {
-    type: Number,
-    default: 0
-  },
+  }
+
   // pointRating: {
   //   type: Double,
   //   default: 0
   // }
 },
+  {
+    timestamps: true,
+  },
   {
     collection: "items"
   })

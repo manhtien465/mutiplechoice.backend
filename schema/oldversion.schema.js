@@ -8,9 +8,24 @@ const Version = new Schema({
   size: {
     type: String,
   },
-  linkdownloadOldVersion: {
-    type: String
-  },
+  // linkdownloadOldVersion: [{
+  //   MinimumVersion: {
+  //     type: String
+  //   },
+  //   dayUpdate: {
+  //     type: String,
+  //   },
+  //   architecture: {
+  //     type: String
+  //   },
+  //   ScreenDPI: {
+  //     type: String
+  //   },
+  //   link: {
+
+  //   }
+  // }],
+  linkdownloadOldVersion: {},
   apk: [{ type: String }],
   itemId: {
     type: Schema.Types.ObjectId,

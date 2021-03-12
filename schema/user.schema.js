@@ -20,7 +20,6 @@ var userSchema = new Schema({
         unique: true
     },
 
-
     role: {
         type: String,
         enum: ["USER", "ADMIN", "SUPERADMIN", "COLLABORATOR"],

@@ -7,10 +7,13 @@ var mongoose = require("mongoose")
 // var session = require("express-session")
 // var connectRedis = require('connect-redis')
 // var Redis = require("ioredis")
+var cors = require('cors')
 const crawlerRouter = require("./routes/crawler.route")
 const userRouter = require("./routes/user.route")
 const categoryRouter = require('./routes/category.route')
+const ratingRouter = require("./routes/rating.route")
 const itemRouter = require("./routes/item.route")
+const versionRouter = require("./routes/oldversion.route")
 const passport = require("passport");
 const flash = require('connect-flash');
 
@@ -24,7 +27,7 @@ const connect = mongoose.connect(MONGO_Options.MONGO_URI, MONGO_Options.MONGO_Op
 //   const client = new Redis(Redis_option.Redis_Option)
 //   const store = new RedisStore({ client })
 var app = express();
-
+app.use(cors())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -40,6 +43,8 @@ app.use("/", crawlerRouter)
 app.use("/", categoryRouter)
 app.use("/", itemRouter)
 app.use('/', userRouter)
+app.use('/', ratingRouter)
+app.use("/", versionRouter)
 
 // app.use(
 //   session({ ...Session_Option,
