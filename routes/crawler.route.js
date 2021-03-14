@@ -7,6 +7,7 @@ router.route("/api/v1/crawler/getdata")
 
 router.route("/api/v1/crawler/getcategory")
   .post(Crawler.getCategory)
+// router.route("/api/v1/crawler/updateCategory")
 router.route("/api/v1/crawler/update")
   .post(Crawler.getLinkAndoldversion)
 module.exports = router;

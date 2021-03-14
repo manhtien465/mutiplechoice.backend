@@ -29,13 +29,15 @@ const getCategory = async (url) => {
   await pg.goto(url)
   const data = await pg.evaluate(async () => {
 
-    const data = Array.from(document.querySelectorAll(".menu_head1")).map(value => (
+    let data = Array.from(document.querySelectorAll(".menu_head1")).map(value => (
       {
         name: value.textContent,
         path: `/root/${value.textContent}`,
         children: []
       }
     ))
+    data[0].name = data[0].name.slice(2)
+    data[1].name = data[1].name.slice(1)
     const belongtoGame = Array.from(document.querySelectorAll(".box .menu_list div ul")).map(value => (
       {
         list: Array.from(value.querySelectorAll("li a")).map(index => (
