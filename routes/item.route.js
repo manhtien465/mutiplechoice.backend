@@ -48,4 +48,8 @@ router.get('/api/v1/item/gets',
   advancedResults(Item, ["sub", "Parentcategory"]),
   ItemController.gets
 )
+
+router.post("/api/v1/item/download",
+
+  ItemController.download)
 module.exports = router;
