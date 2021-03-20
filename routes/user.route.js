@@ -48,20 +48,23 @@ router.put("api/v1/users/update",
   passport.authenticate("jwt", { session: false }), UserController.updateUser
 )
 
-router.delete("api/v1/users/delete/:id", passport.authenticate("jwt", { session: false }), authorize("ADMIN"), UserController.deleteUser)
+router.delete("/api/v1/users/delete/:id",
+  passport.authenticate("jwt", { session: false }),
+  // authorize("ADMIN"),
+  UserController.deleteUser)
 
-router.route("api/v1/users/login/forgotpassword")
+router.route("/api/v1/users/login/forgotpassword")
   .post(UserController.forgotPassword)
 
-router.route("api/v1/users/login/forgotpassword/confirm/:token")
+router.route("/api/v1/users/login/forgotpassword/confirm/:token")
   .post(UserController.changePassword)
 
-router.get("api/v1/users/getall", advancedResults(Users), UserController.getAlluser)
+router.get("/api/v1/users/getall", advancedResults(Users), UserController.getAlluser)
 // router.get("/get", advancedResults(Users), UserController.getAlluser)
-router.post("api/v1/users/ban", UserController.banUser)
+router.post("/api/v1/users/ban", UserController.banUser)
 // router.route("/revoke")
 //   .post(UserController.revokeRefreshtoken)
 
-router.route("api/v1/checktoken")
+router.route("/api/v1/checktoken")
   .post(passport.authenticate("jwt", { session: false }), UserController.checkToken)
 module.exports = router;

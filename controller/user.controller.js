@@ -51,7 +51,7 @@ module.exports = {
       res.json(404).json({ msg: "user not found" })
     }
     await existUser.remove()
-    res.json({ msg: "success" })
+    res.json({ msg: "success", user: existUser })
   },
   updateUser: async (req, res, next) => {
     const errors = validationResult(req);
@@ -98,6 +98,7 @@ module.exports = {
     res.json(res.advancedResults)
   },
   createuser: async (req, res, next) => {
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -124,10 +125,16 @@ module.exports = {
       var newuser = new User({
         ...req.body
       })
+      const expToken = Math.floor(Date.now()) + (config.timeExpToken * 1000)
+      const expRefreshToken = Math.floor(Date.now()) + (config.timeExpRefreshtoken * 1000)
       const result = await newuser.save();
       // await sendConfirmationEmail(result)
       return res.json({
         user: newuser,
+        token: signToken(newuser, expToken),
+        refreshToken: refreshToken(user, expRefreshToken),
+        expToken: config.timeExpToken,
+        expRefreshToken: config.timeExpRefreshtoken
         // msg: "please check you mail"
       })
     } catch (error) {

@@ -165,7 +165,7 @@ recursive = async (url, SetNumberPage) => {
     const data1 = Array.from(document.querySelectorAll(".editors_m"))
 
     for (let i = 0; i < data1.length; i++) {
-      let name = data1[i].querySelector(".editors_m_2 .editors_title a").textContent
+      let name = data1[i].querySelector(".editors_m_2 .editors_title a").getAttribute("title")
       let url = data1[i].querySelector(".editors_m_2 .editors_title a").getAttribute("href")
       let avatar = data1[i].querySelector(".editors_m_1 p a img").getAttribute("src")
       let currentVersion = data1[i].querySelector(".editors_m_2 .editors_title a .vname").textContent
