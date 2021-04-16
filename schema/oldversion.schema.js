@@ -8,6 +8,9 @@ const Version = new Schema({
   size: {
     type: String,
   },
+  count: {
+    type: Number,
+  },
   // linkdownloadOldVersion: [{
   //   MinimumVersion: {
   //     type: String

@@ -12,6 +12,6 @@ module.exports = {
     useCreateIndex: true,
     useUnifiedTopology: true
   },
-  //MONGO_URI: `mongodb+srv://${MONGO_USERNAME}:${encodeURIComponent(MONGO_PASSWORD)}@cluster0-vaatg.mongodb.net/${MONGO_DATABASE}?retryWrites=true&w=majority`
-  MONGO_URI: `mongodb://localhost/game`
+  MONGO_URI: `mongodb+srv://${MONGO_USERNAME}:${encodeURIComponent(MONGO_PASSWORD)}@cluster0-vaatg.mongodb.net/${MONGO_DATABASE}?retryWrites=true&w=majority`
+  //MONGO_URI: `mongodb://localhost/game`
 }

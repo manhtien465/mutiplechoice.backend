@@ -87,13 +87,14 @@ const getVerrsion = async (url) => {
   await pg.goto(url)
   const data = await pg.evaluate(async () => {
 
-    const data = Array.from(document.querySelectorAll(".ver-wrap li")).map(value => (
+    const data = Array.from(document.querySelectorAll(".ver-wrap li")).map((value, i) => (
 
       {
         linkdownloadOldVersion: value.querySelector("a").getAttribute("href"),
         name: value.querySelector(".ver-item-n").textContent,
         size: value.querySelector(".ver-item-s").textContent,
         itemId: null,
+        count: i,
         apk: Array.from(value.querySelectorAll(".ver-item-t")).map(value => (
           value.textContent
         )),
@@ -188,16 +189,17 @@ recursive = async (url, SetNumberPage) => {
 }
 module.exports = {
   getdata: async (req, res, next) => {
-    let url = "https://apkpure.com/vn/discover?page=2"
+    const { page, limit } = req.body
+    let url = `https://apkpure.com/vn/discover?page=${page}`
     try {
 
-      let data = await recursive(url, 3)
+      let data = await recursive(url, limit)
       // let listINforOldVersion = null
 
       for (let i = 0; i < data.length; i++) {
         let newurl = `https://apkpure.com${data[i].url}`
         let result = await getdetail(newurl)
-        // console.log("result", result);
+
         // let merge 2object
         data[i] = Object.assign({}, data[i], result)
         // create Category
@@ -300,18 +302,22 @@ module.exports = {
     for (let i = 0; i < listOfItemNotFinish.length; i++) {
 
       id = listOfItemNotFinish[i]._id
+      let count = 0;
       if (listOfItemNotFinish[i].urlversion !== null) {
         let listINforOldVersion = await getVerrsion(`https://apkpure.com${listOfItemNotFinish[i].urlversion}`)
 
         for (let j = 0; j < listINforOldVersion.length; j++) {
+          count = listINforOldVersion.length - j
           if (listINforOldVersion[j].linkdownloadOldVersion.slice(listINforOldVersion[j].linkdownloadOldVersion.length - 7, listINforOldVersion[j].linkdownloadOldVersion.length) !== "version") {
             let newurlfordownload = listINforOldVersion[j].linkdownloadOldVersion
             // listINforOldVersion[j].linkdownloadOldVersion = []
-            console.log("run again");
+            // console.log("run again");
             let arraylinkdownload = await getLinkDownLoadOld(`https://apkpure.com${newurlfordownload}`)
-            console.log("aray", arraylinkdownload, typeof arraylinkdownload);
+            console.log("aray", arraylinkdownload);
             listINforOldVersion[j].linkdownloadOldVersion = arraylinkdownload
             listINforOldVersion[j].itemId = id
+            listINforOldVersion[j].count = count
+            count = 0
 
           }
           listINforOldVersion[j].linkdownloadOldVersion = {
@@ -319,7 +325,14 @@ module.exports = {
           }
 
           listINforOldVersion[j].itemId = id
+          listINforOldVersion[j].count = count
+          count = 0
         }
+        // for (z = listINforOldVersion.length; z < 0; z--) {
+        //   let newVersion = new Versions({ ...listINforOldVersion[z] })
+        //   await newVersion.save()
+
+        // }
 
         const insertmany = await Versions.insertMany(listINforOldVersion)
       }
