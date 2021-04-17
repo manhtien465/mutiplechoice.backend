@@ -52,4 +52,5 @@ router.get('/api/v1/item/gets',
 router.post("/api/v1/item/download",
 
   ItemController.download)
+router.get("/api/v1/item/search", ItemController.search)
 module.exports = router;

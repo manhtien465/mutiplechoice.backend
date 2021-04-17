@@ -24,6 +24,11 @@ const getlinkdownload = async (url) => {
 
 
 module.exports = {
+  search: async (req, res, next) => {
+    const { keyword } = req.query
+    const result = await Item.find({ $text: { $search: keyword } })
+    res.json(result)
+  },
   create: async (req, res, next) => {
     const { name } = req.body
     // const item = Item.findOne({ name });

@@ -135,7 +135,7 @@ const getdetail = async (url) => {
     let require = null
     let description = null
     try {
-      description = document.querySelector(".content").textContent
+      description = document.querySelector(".content").innerHTML
       addition = Array.from(document.querySelectorAll(".additional ul li p"))
       author = addition[7].textContent
       datePublish = addition[5].textContent

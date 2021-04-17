@@ -63,5 +63,6 @@ const Item = new Schema({
   {
     collection: "items"
   })
+Item.index({ name: 'text', description: 'text', author: "text" })
 const item = mongoose.model("items", Item)
 module.exports = item
