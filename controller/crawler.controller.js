@@ -23,7 +23,15 @@ const download = (url, destination) => new Promise((resolve, reject) => {
   });
 });
 const getCategory = async (url) => {
-  const browser = await puppeterr.launch({ headless: false });
+  const browser = await puppeterr.launch({
+    headless: false,
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
   const pg = await browser.newPage();
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
@@ -54,7 +62,15 @@ const getCategory = async (url) => {
   return data
 }
 const getLinkDownLoadOld = async (url) => {
-  const browser = await puppeterr.launch({ headless: false });
+  const browser = await puppeterr.launch({
+    headless: false,
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
   const pg = await browser.newPage();
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
@@ -81,7 +97,15 @@ const getLinkDownLoadOld = async (url) => {
   return data
 }
 const getVerrsion = async (url) => {
-  const browser = await puppeterr.launch({ headless: false });
+  const browser = await puppeterr.launch({
+    headless: false,
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
   const pg = await browser.newPage();
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
@@ -109,7 +133,15 @@ const getVerrsion = async (url) => {
   return data
 }
 const getdetail = async (url) => {
-  const browser = await puppeterr.launch({ headless: false });
+  const browser = await puppeterr.launch({
+    headless: false,
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
   const pg = await browser.newPage();
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)
@@ -155,7 +187,15 @@ const getdetail = async (url) => {
   return data
 }
 recursive = async (url, SetNumberPage) => {
-  const browser = await puppeterr.launch({ headless: false });
+  const browser = await puppeterr.launch({
+    headless: false,
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ]
+  });
   const pg = await browser.newPage();
   await pg.setDefaultNavigationTimeout(0);
   await pg.goto(url)

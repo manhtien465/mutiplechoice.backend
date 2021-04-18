@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "engines": {
+    "node": "12.22.1"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
@@ -16,6 +19,7 @@
     "express": "~4.16.1",
     "express-session": "^1.17.1",
     "express-validator": "^6.9.2",
+    "heroku-awake": "^1.0.10",
     "http-errors": "~1.6.3",
     "image-downloader": "^4.0.2",
     "ioredis": "^4.17.3",
